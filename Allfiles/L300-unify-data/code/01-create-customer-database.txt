@@ -1,0 +1,87 @@
+CREATE CALDOVA CUSTOMER-FEEDBACK TABLES
+Language: T-SQL
+
+SET NOCOUNT ON;
+GO
+
+DROP TABLE IF EXISTS dbo.customer_feedback;
+DROP TABLE IF EXISTS dbo.product;
+GO
+
+CREATE TABLE dbo.product (
+    ProductID varchar(10) NOT NULL PRIMARY KEY,
+    ProductName nvarchar(100) NOT NULL,
+    TherapyArea nvarchar(100) NOT NULL,
+    LifecycleStage nvarchar(50) NOT NULL,
+    CommercialRegion nvarchar(50) NOT NULL,
+    ManufacturingType nvarchar(50) NOT NULL
+);
+
+CREATE TABLE dbo.customer_feedback (
+    FeedbackID int NOT NULL PRIMARY KEY,
+    ProductID varchar(10) NOT NULL,
+    FeedbackDate date NOT NULL,
+    Channel varchar(30) NOT NULL,
+    Region varchar(50) NOT NULL,
+    FeedbackText nvarchar(max) NOT NULL,
+    Sentiment varchar(10) NULL,
+    AIError nvarchar(max) NULL,
+    CONSTRAINT FK_customer_feedback_product
+        FOREIGN KEY (ProductID) REFERENCES dbo.product(ProductID)
+);
+GO
+
+INSERT INTO dbo.product (ProductID, ProductName, TherapyArea, LifecycleStage, CommercialRegion, ManufacturingType) VALUES
+('P101', N'New Pharma Product', N'Injectable', N'Pre-Launch', N'Global', N'Biologics'),
+('P102', N'Product 2', N'Immunology', N'Phase III', N'Global', N'Biologics'),
+('P103', N'Product 3', N'Neurology', N'Commercial', N'Global', N'Biologics'),
+('P104', N'Product 4', N'Cardiology', N'Pre-Launch', N'Global', N'Biologics'),
+('P105', N'Product 5', N'Cardiology', N'Commercial', N'Global', N'Biologics'),
+('P106', N'Product 6', N'Oncology', N'Commercial', N'Global', N'Biologics'),
+('P107', N'Product 7', N'Cardiology', N'Phase III', N'Global', N'Biologics'),
+('P108', N'Product 8', N'Cardiology', N'Pre-Launch', N'Global', N'Biologics'),
+('P109', N'Product 9', N'Neurology', N'Commercial', N'Global', N'Biologics'),
+('P110', N'Product 10', N'Neurology', N'Phase III', N'Global', N'Biologics'),
+('P111', N'Product 11', N'Neurology', N'Commercial', N'Global', N'Biologics'),
+('P112', N'Product 12', N'Cardiology', N'Commercial', N'Global', N'Biologics'),
+('P113', N'Product 13', N'Oncology', N'Pre-Launch', N'Global', N'Biologics'),
+('P114', N'Product 14', N'Cardiology', N'Pre-Launch', N'Global', N'Biologics'),
+('P115', N'Product 15', N'Rare Disease', N'Phase III', N'Global', N'Biologics'),
+('P116', N'Product 16', N'Rare Disease', N'Phase III', N'Global', N'Biologics'),
+('P117', N'Product 17', N'Rare Disease', N'Phase III', N'Global', N'Biologics'),
+('P118', N'Product 18', N'Cardiology', N'Pre-Launch', N'Global', N'Biologics'),
+('P119', N'Product 19', N'Cardiology', N'Phase III', N'Global', N'Biologics'),
+('P120', N'Product 20', N'Neurology', N'Commercial', N'Global', N'Biologics'),
+('P121', N'Product 21', N'Neurology', N'Phase III', N'Global', N'Biologics'),
+('P122', N'Product 22', N'Neurology', N'Commercial', N'Global', N'Biologics'),
+('P123', N'Product 23', N'Immunology', N'Phase III', N'Global', N'Biologics'),
+('P124', N'Product 24', N'Rare Disease', N'Pre-Launch', N'Global', N'Biologics'),
+('P125', N'Product 25', N'Oncology', N'Pre-Launch', N'Global', N'Biologics');
+
+INSERT INTO dbo.customer_feedback
+    (FeedbackID, ProductID, FeedbackDate, Channel, Region, FeedbackText)
+VALUES
+(1, 'P101', '2026-09-02', 'Portal', 'North America', N'The packaging arrived intact, and the quick-start instructions were clear.'),
+(2, 'P101', '2026-09-03', 'Email', 'Europe', N'The delivery was two days late, and the clinic could not confirm the revised arrival time.'),
+(3, 'P101', '2026-09-04', 'Survey', 'Asia Pacific', N'The training was useful, but the replacement process took too long.'),
+(4, 'P101', '2026-09-05', 'Portal', 'North America', N'The shipment arrived on the scheduled date.'),
+(5, 'P101', '2026-09-06', 'Email', 'Europe', N'Support answered quickly and resolved the packaging question in one call.'),
+(6, 'P101', '2026-09-07', 'Survey', 'Asia Pacific', N'The printed instructions were difficult to read, and the online version was unavailable.'),
+(7, 'P104', '2026-09-02', 'Portal', 'Europe', N'Scheduling was straightforward, and the training materials helped our team prepare.'),
+(8, 'P104', '2026-09-03', 'Email', 'North America', N'The package was complete, but the appointment was rescheduled without enough notice.'),
+(9, 'P104', '2026-09-04', 'Survey', 'Asia Pacific', N'The temperature indicator was damaged when the package arrived.'),
+(10, 'P104', '2026-09-05', 'Portal', 'Europe', N'The support team explained the setup clearly and followed up the next day.'),
+(11, 'P104', '2026-09-06', 'Email', 'North America', N'The delivery status page showed the same update throughout the day.'),
+(12, 'P113', '2026-09-02', 'Survey', 'North America', N'The onboarding call was helpful, and the starter materials were easy to follow.'),
+(13, 'P113', '2026-09-03', 'Portal', 'Europe', N'The package arrived on time, but one instruction card was missing.'),
+(14, 'P113', '2026-09-04', 'Email', 'Asia Pacific', N'No problems were reported during delivery or onboarding.'),
+(15, 'P113', '2026-09-05', 'Survey', 'North America', N'I contacted support twice and still did not receive the missing guide.'),
+(16, 'P113', '2026-09-06', 'Portal', 'Europe', N'The portal registration was confusing at first, although support resolved it quickly.');
+GO
+
+SELECT COUNT(*) AS ProductCount FROM dbo.product;
+SELECT COUNT(*) AS FeedbackCount FROM dbo.customer_feedback;
+SELECT ProductID, COUNT(*) AS FeedbackCount
+FROM dbo.customer_feedback
+GROUP BY ProductID
+ORDER BY ProductID;
