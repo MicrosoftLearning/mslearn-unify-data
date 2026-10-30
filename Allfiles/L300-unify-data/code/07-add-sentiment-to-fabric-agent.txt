@@ -1,0 +1,23 @@
+ADD SENTIMENT TO THE CALDOVA FABRIC DATA AGENT
+Purpose: Update the Lakehouse source after sentiment scoring and add a P101 sentiment example.
+
+================================================================================
+UPDATED LAKEHOUSE SOURCE INSTRUCTIONS
+================================================================================
+
+launch_program has one row per launch and joins to product on ProductID. capacity_plan and batch join to launch_program on LaunchProgramID and to plant on PlantID. supplier joins to launch_program on LaunchProgramID and to product on ProductID. customer_feedback joins to product on ProductID and contains submitted comments. Sentiment is model-generated. Ignore customer_feedback rows where AIError is not null when analyzing sentiment. For eligible supplier comparisons, require a currently valid GMP certificate, zero open critical findings, fast-track eligibility, and enough qualified available capacity to cover the launch gap.
+
+================================================================================
+SENTIMENT EXAMPLE
+================================================================================
+
+Question:
+What is the sentiment distribution for P101?
+
+SQL query:
+SELECT ProductID, Sentiment, COUNT(*) AS FeedbackCount
+FROM dbo.customer_feedback
+WHERE ProductID = 'P101'
+  AND AIError IS NULL
+GROUP BY ProductID, Sentiment
+ORDER BY Sentiment;

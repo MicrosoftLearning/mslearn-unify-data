@@ -1,0 +1,5 @@
+LitwareProductID,LitwareProductName,CaldovaProductID,MappingStatus
+LPR001,Litware Product 001,P101,Approved
+LPR002,Litware Product 002,P104,Approved
+LPR003,Litware Product 003,P113,Approved
+LPR004,Litware Product 004,,Unmapped

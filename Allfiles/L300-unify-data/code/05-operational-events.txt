@@ -1,0 +1,51 @@
+CREATE AND QUERY THE OPERATIONAL EVENTS TABLE
+Language: KQL
+
+// Step 1: Create the empty, typed table used by the Eventstream destination.
+// The table has no rows until you configure the destination and replay the simulated events.
+.create table operational_events (
+    EventID:string,
+    EventTime:datetime,
+    EventType:string,
+    PlantID:string,
+    ProductID:string,
+    BatchID:string,
+    CMOID:string,
+    LaunchProgramID:string,
+    MetricName:string,
+    MetricValue:real,
+    Threshold:real,
+    Unit:string,
+    Severity:string,
+    SourceSystem:string
+)
+
+// Step 2: Map each field in the incoming JSON payload to its typed Eventhouse column.
+// The Eventstream destination uses this mapping when it writes each simulated event.
+.create-or-alter table operational_events ingestion json mapping 'operational_events_json'
+'[
+  {"column":"EventID","path":"$.EventID"},
+  {"column":"EventTime","path":"$.EventTime"},
+  {"column":"EventType","path":"$.EventType"},
+  {"column":"PlantID","path":"$.PlantID"},
+  {"column":"ProductID","path":"$.ProductID"},
+  {"column":"BatchID","path":"$.BatchID"},
+  {"column":"CMOID","path":"$.CMOID"},
+  {"column":"LaunchProgramID","path":"$.LaunchProgramID"},
+  {"column":"MetricName","path":"$.MetricName"},
+  {"column":"MetricValue","path":"$.MetricValue"},
+  {"column":"Threshold","path":"$.Threshold"},
+  {"column":"Unit","path":"$.Unit"},
+  {"column":"Severity","path":"$.Severity"},
+  {"column":"SourceSystem","path":"$.SourceSystem"}
+]'
+
+// Step 3: Run this query only after the complete event replay.
+// It returns LP001 observations where the measured value exceeds the allowed threshold
+// and calculates how far each observation is over that threshold.
+operational_events
+| where LaunchProgramID == "LP001" and MetricValue > Threshold
+| extend AmountOverThreshold = round(MetricValue - Threshold, 1)
+| project EventTime, EventType, PlantID, BatchID, CMOID, MetricName,
+          MetricValue, Threshold, AmountOverThreshold, Unit, Severity
+| order by EventTime asc

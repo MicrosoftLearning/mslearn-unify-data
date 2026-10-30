@@ -1,0 +1,81 @@
+CREATE THE SENTIMENT-SCORING PROCEDURE
+Language: T-SQL
+
+-- Replace <azure-openai-resource> and <deployment-name> before you run this script.
+
+CREATE OR ALTER PROCEDURE dbo.score_feedback_sentiment
+    @FeedbackID int
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @AnalysisText nvarchar(max);
+    DECLARE @Payload nvarchar(max);
+    DECLARE @Response nvarchar(max);
+    DECLARE @ReturnCode int;
+    DECLARE @Sentiment varchar(20);
+
+    SELECT @AnalysisText = CONCAT(
+        'Product name: ', p.ProductName,
+        '. Therapy area: ', p.TherapyArea,
+        '. Lifecycle stage: ', p.LifecycleStage,
+        '. Commercial region: ', p.CommercialRegion,
+        '. Manufacturing type: ', p.ManufacturingType,
+        '. Customer feedback: ', f.FeedbackText
+    )
+    FROM dbo.customer_feedback AS f
+    INNER JOIN dbo.product AS p
+        ON p.ProductID = f.ProductID
+    WHERE f.FeedbackID = @FeedbackID;
+
+    IF @AnalysisText IS NULL
+        THROW 50001, 'The requested feedback record does not exist.', 1;
+
+    SET @Payload = N'{
+        "messages": [
+            {
+                "role": "system",
+                "content": "Classify the sentiment of the supplied feedback. Return exactly one lowercase word: positive, negative, neutral, or mixed."
+            },
+            {
+                "role": "user",
+                "content": "' + STRING_ESCAPE(@AnalysisText, 'json') + N'"
+            }
+        ],
+        "max_completion_tokens": 20
+    }';
+
+    EXEC @ReturnCode = sys.sp_invoke_external_rest_endpoint
+        @url = N'https://<azure-openai-resource>.openai.azure.com/openai/deployments/<deployment-name>/chat/completions?api-version=2025-04-01-preview',
+        @method = 'POST',
+        @credential = [https://<azure-openai-resource>.openai.azure.com],
+        @payload = @Payload,
+        @response = @Response OUTPUT,
+        @retry_count = 2;
+
+    IF @ReturnCode <> 0
+    BEGIN
+        UPDATE dbo.customer_feedback
+        SET AIError = CONCAT('REST call failed with return code ', @ReturnCode, '.')
+        WHERE FeedbackID = @FeedbackID;
+        THROW 50002, 'Azure OpenAI sentiment scoring failed.', 1;
+    END;
+
+    SET @Sentiment = LOWER(TRIM(JSON_VALUE(
+        @Response,
+        '$.result.choices[0].message.content'
+    )));
+
+    IF @Sentiment IS NULL OR @Sentiment NOT IN ('positive', 'negative', 'neutral', 'mixed')
+    BEGIN
+        UPDATE dbo.customer_feedback
+        SET AIError = CONCAT('Unexpected model output: ', COALESCE(@Sentiment, '<null>'))
+        WHERE FeedbackID = @FeedbackID;
+        THROW 50003, 'Azure OpenAI returned an unexpected sentiment label.', 1;
+    END;
+
+    UPDATE dbo.customer_feedback
+    SET Sentiment = @Sentiment,
+        AIError = NULL
+    WHERE FeedbackID = @FeedbackID;
+END;

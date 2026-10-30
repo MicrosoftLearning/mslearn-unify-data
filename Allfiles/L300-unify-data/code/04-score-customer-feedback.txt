@@ -1,0 +1,36 @@
+SCORE AND VALIDATE CUSTOMER FEEDBACK
+Language: T-SQL
+
+SET NOCOUNT ON;
+
+DECLARE @FeedbackID int;
+
+DECLARE feedback_cursor CURSOR LOCAL FAST_FORWARD FOR
+SELECT FeedbackID
+FROM dbo.customer_feedback
+WHERE Sentiment IS NULL
+ORDER BY FeedbackID;
+
+OPEN feedback_cursor;
+FETCH NEXT FROM feedback_cursor INTO @FeedbackID;
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    EXEC dbo.score_feedback_sentiment @FeedbackID = @FeedbackID;
+    FETCH NEXT FROM feedback_cursor INTO @FeedbackID;
+END;
+
+CLOSE feedback_cursor;
+DEALLOCATE feedback_cursor;
+
+IF EXISTS (
+    SELECT 1
+    FROM dbo.customer_feedback
+    WHERE Sentiment IS NULL OR AIError IS NOT NULL
+)
+    THROW 50004, 'One or more feedback records were not scored.', 1;
+
+SELECT Sentiment, COUNT(*) AS FeedbackCount
+FROM dbo.customer_feedback
+GROUP BY Sentiment
+ORDER BY Sentiment;
