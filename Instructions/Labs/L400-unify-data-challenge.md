@@ -48,7 +48,7 @@ After you complete this challenge, you're able to:
 |---|---:|
 | Business answers in Microsoft 365 Copilot | 100 |
 | Real-time operational answers in Foundry | 110 |
-| Governed Litware integration | 135 |
+| Integrate operational data from the acquired organization | 135 |
 | Clean up | 15 |
 | **Total** | **360** |
 
@@ -358,7 +358,7 @@ If a Fabric tool call times out, deploy your environment provider's approved bac
 
 </details>
 
-## Task 03: Govern Litware integration through shared business context
+## Task 03: Integrate operational data from the acquired organization
 
 ### Introduction
 
