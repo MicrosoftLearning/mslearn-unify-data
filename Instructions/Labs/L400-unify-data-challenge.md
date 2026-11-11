@@ -60,7 +60,7 @@ Each solution includes the setup it needs. Keep the business solution available 
 
 Use your prepared Windows environment and assigned work or school account. You need familiarity with SQL, basic KQL, Fabric notebooks, Python execution in PowerShell, and agent configuration. No previous exercise is required.
 
-Confirm that you can open Fabric and Foundry with your assigned account. At a minimum, assign F4 capacity to Fabric. Have your Fabric capacity, Azure subscription and region, and resource ownership boundaries available. If an assigned value or access is missing, contact your environment provider.
+Confirm that you can open Fabric, Foundry, and Microsoft 365 Copilot with your assigned account. Use the same account and tenant for Fabric and Microsoft 365 Copilot. Complete the [L400 environment requirements](./00-environment-setup.md#prepare-for-the-l400-challenge), including Copilot access and tenant settings, before starting. At a minimum, assign F4 capacity to Fabric. Have your Fabric capacity, Azure subscription and region, and resource ownership boundaries available. If an assigned value or access is missing, contact your environment provider.
 
 This notebook uses Microsoft Fabric AI functions and requires a supported AI model deployment to be available to the Fabric workspace. Before continuing, verify that your workspace can use Fabric AI functions;a supported model deployment is available;the deployment is accessible from the region in which your Fabric capacity/workspace is running; and the model/deployment required by this notebook has been configured before running the enrichment cells. If the notebook returns DeploymentConfigNotFound, Fabric AI functions cannot locate a usable deployment configuration. Verify the model deployment and regional configuration, then rerun the enrichment cell.
 
@@ -99,8 +99,7 @@ Build a business solution using notebook-populated planning tables, a Fabric SQL
 - [L300 customer-database creation](./L300-unify-data.md#create-and-load-the-customer-database).
 - [Automatic mirroring for Fabric SQL](https://learn.microsoft.com/fabric/database/sql/mirroring-overview).
 - [Create a OneLake shortcut](https://learn.microsoft.com/fabric/onelake/shortcuts/create-onelake-shortcut).
-- [Fabric data agents as Copilot Studio tools](https://learn.microsoft.com/fabric/data-science/data-agent-microsoft-copilot-studio-tool).
-- [Teams and Microsoft Copilot channels](https://learn.microsoft.com/microsoft-copilot-studio/publication-add-bot-to-microsoft-teams).
+- [Consume a Fabric data agent in Microsoft 365 Copilot](https://learn.microsoft.com/fabric/data-science/data-agent-microsoft-365-copilot).
 
 ### Key tasks
 
@@ -215,7 +214,7 @@ Connect the published data agent to a business-facing experience and verify the 
 <details markdown="block">
 <summary><strong>Expand this section to view the solution</strong></summary>
 
-1. After you verify that the Fabric data agent responses are accurate, select **Publish**. Configure the publication process to also publish the data agent to Microsoft Copilot.
+1. After you verify that the Fabric data agent responses are accurate, select **Publish**, select **Publish to Agent Store** to make the data agent available in Microsoft 365 Copilot, and complete publication.
 
 > **Note**: Copilot Studio can also be used to make an agent available in Microsoft 365 Copilot. This workshop does not implement that path because it requires additional Copilot Studio licensing/credits and administrative configuration.
 
@@ -226,7 +225,7 @@ Connect the published data agent to a business-facing experience and verify the 
 4. Verify that Microsoft 365 Copilot invokes the Fabric data agent and returns information based on the data sources configured for the agent.
 
 5. Ask an additional question to further explore the organization's data.
-6. 
+
 **Expected result:** The agent works in Microsoft 365 Copilot through the published Fabric data agent. If installation or sign-in is blocked, contact your environment provider. Keep this workspace, database, shortcut, and agent for Task 03.
 
 </details>
@@ -239,7 +238,7 @@ Operations needs a different solution: production and supplier exceptions must i
 
 ### Description
 
-Reuse the populated planning tables and add Eventstream ingestion, an Eventhouse for querying exceptions, and a Lakehouse destination for retained history. Create a separate operational data agent and connect it to Foundry. This agent doesn't query customer feedback or use the Copilot Studio agent. **Estimated time:** 110 minutes.
+Reuse the populated planning tables and add Eventstream ingestion, an Eventhouse for querying exceptions, and a Lakehouse destination for retained history. Create a separate operational data agent and connect it to Foundry. This agent doesn't query customer feedback or use the business agent. **Estimated time:** 110 minutes.
 
 ### Success criteria
 
@@ -352,7 +351,7 @@ Ground operational answers in both planning tables and event queries, without in
 
 **Expected result:** The Foundry assistant answers operational questions using SQL and KQL evidence. Direct grounding is like giving the assistant indexed source binders: explicit keys and rules are sufficient for this focused request, while each added source creates instructions to maintain.
 
-This solution is complete without the transactional feedback database or the Teams agent. If a data agent isn't listed in Foundry, confirm its published state, selected workspace, and signed-in account; contact your environment provider if it remains unavailable.
+This solution is complete without the transactional feedback database or the business agent. If a data agent isn't listed in Foundry, confirm its published state, selected workspace, and signed-in account; contact your environment provider if it remains unavailable.
 
 If a Fabric tool call times out, deploy your environment provider's approved background-mode-capable model in the operational Foundry project, using the model-deployment steps above. In **Playground**, select that deployment under **Model**, open the parameters icon, turn on **Background mode**, and save before retesting. The linked documentation lists supported models, including `gpt-5.4` and `gpt-5.5`. Don't replay the events to resolve an agent timeout.
 
@@ -366,7 +365,7 @@ Caldova's commercial and leadership teams now ask whether Litware can help the l
 
 ### Description
 
-Extend the **business solution from Task 01**. Generate sentiment through Foundry and persist it in its Fabric SQL database. Add issue enrichment and Litware capacity evidence, model the relationships in an ontology, and update the business teams agent to use an ontology-grounded data agent. This solution doesn't require Task 02's Foundry agent, Eventstream, or Eventhouse. **Estimated time:** 135 minutes.
+Extend the **business solution from Task 01**. Generate sentiment through Foundry and persist it in its Fabric SQL database. Add issue enrichment and Litware capacity evidence, model the relationships in an ontology, and publish an ontology-grounded data agent to Microsoft 365 Copilot. This solution doesn't require Task 02's Foundry agent, Eventstream, or Eventhouse. **Estimated time:** 135 minutes.
 
 The Litware files contain 31 fictional business records:
 
@@ -680,6 +679,8 @@ Use the shared business context to explain Litware's contribution and customer c
 **Expected result**
 
 Expected result: The ontology-grounded Fabric data agent is published to Microsoft Copilot and uses the shared business context to explain Litware's potential contribution and customer concerns. It preserves the original launch facts, distinguishes 54,000 nominal P101 units from 12,000 eligible planned Packaging units, reports the source-backed customer counts, and doesn't invent a Caldova mapping for the unmapped Litware product.
+
+If context appears stale or a bound table is missing, refresh the ontology context in the data agent. Inspect **Download ontology context** to confirm the expected bindings, then check the mounted Lakehouse and selected tables. Inspect the generated query and run it against the source before republishing the data agent and starting a fresh Microsoft 365 Copilot conversation.
 </details>
 
 ## Task 04: Clean up your solution resources
@@ -708,11 +709,11 @@ Use the ownership boundaries supplied for your environment.
 <details markdown="block">
 <summary><strong>Expand this section to view the solution</strong></summary>
 
-1. In Microsoft 365 Copilot, remove your installed `Caldova business readiness` app from the agent list.
+1. In Microsoft 365 Copilot, remove both `caldova_business_data_agent` and `caldova_ontology_data_agent` from your agent list.
 2. In Foundry, delete the model deployments you created in your operational and enrichment projects, including any approved substitute or timeout-recovery deployment. Delete `caldova_foundry_ops` if it isn't removed with its project.
 3. In the [Azure portal](https://portal.azure.com/), delete your dedicated `caldova-operations-<initials>-rg` and `caldova-enrichment-<initials>-rg` resource groups. Don't delete any shared resource group.
 4. In Fabric, remove `caldova-challenge-<initials>` through **Workspace settings** > **General** > **Remove this workspace**. Confirm its name before deletion.
-5. Confirm the challenge workspace no longer appears in **Workspaces** and both dedicated resource groups are deleted or completing deletion. Verify that no challenge-owned model deployments remain outside them. Retain the shared Fabric capacity and Copilot Studio environment.
+5. Confirm the challenge workspace no longer appears in **Workspaces** and both dedicated resource groups are deleted or completing deletion. Verify that no challenge-owned model deployments remain outside them. Retain the shared Fabric capacity.
 6. Close the PowerShell windows used for simulator credentials and scoring configuration. Remove the extracted package and virtual environment when you no longer need them.
 
 **Expected result:** Your solution resources are removed, and shared services remain available.
@@ -724,3 +725,4 @@ Use the ownership boundaries supplied for your environment.
 You delivered a business assistant using mirrored transactional data, a separate operational assistant using streamed exceptions, and an ontology-grounded extension for acquired-company context. Each solution uses the infrastructure needed for its customer request.
 
 You have successfully completed this exercise. You verified each implemented experience against source evidence and removed your challenge resources.
+
