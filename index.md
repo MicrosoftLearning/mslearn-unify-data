@@ -6,7 +6,7 @@ layout: home
 
 ## Lab exercises
 
-Build grounded data agent solutions with Microsoft Fabric, Microsoft Foundry, and Microsoft Copilot Studio. These exercises support Microsoft skilling content on [Microsoft Learn](https://learn.microsoft.com/) and use Caldova Pharmaceuticals' launch-readiness challenges to connect business data, real-time operational intelligence, and AI agents.
+Build grounded data agent solutions with Microsoft Fabric, Microsoft Foundry, and Microsoft Copilot Studio. These exercises use Caldova Pharmaceuticals' launch-readiness challenges to connect business data, real-time operational intelligence, and AI agents.
 
 Use the level 300 guided exercise to build an end-to-end solution, or take on the level 400 challenge to apply your skills to three customer solutions.
 
