@@ -1,25 +1,16 @@
 ---
-title: Exercise Instructions
+title: Unify your data and AI platform
 permalink: index.html
 layout: home
 ---
 
-<!--
-Change the title above AND IN THE _config.yml FILE (so that the page header in the GitHub Pages site automatically shows the site name).
+## Lab exercises
 
-When you're ready for the labs to be live - make the repo public and enable GitHub Pages publishing from the main branch (in the repo Settings | Pages).
--->
+Build grounded data agent solutions with Microsoft Fabric, Microsoft Foundry, and Microsoft Copilot Studio. These exercises support Microsoft skilling content on [Microsoft Learn](https://learn.microsoft.com/) and use Caldova Pharmaceuticals' launch-readiness challenges to connect business data, real-time operational intelligence, and AI agents.
 
-This page lists exercises associated with Microsoft skilling content on [Microsoft Learn](https://learn.microsoft.com)
+Use the level 300 guided exercise to build an end-to-end solution, or take on the level 400 challenge to apply your skills to three customer solutions.
 
-<!-- You can edit the paragraph above to provide a more specific description and links to content on Learn.
-
-Include the following note if an Azure subscription is required (or add something similar for any other requirements, such as a Microsoft 365 account).
-
-> **Note**: To complete these exercises, you will need a [Microsoft Azure subscription](https://azure.microsoft.com/free) in which you have sufficient permissions to create and configure the required resources.
-
-If a more complex setup is required, create a separate markdown file with setup instructions at \Instructions\Labs\00-setup.md - being sure to include "lab.title"" metadata at the top so it shows up the list below
--->
+Before you begin, [prepare your environment]({{ '/Instructions/Labs/00-environment-setup.html' | relative_url }}) to confirm the required tools, licenses, permissions, and cloud services.
 
 <hr>
 
@@ -29,7 +20,7 @@ If a more complex setup is required, create a separate markdown file with setup 
 ### [{{ activity.lab.title }}]({{ site.github.url }}{{ activity.url }})
 
 
-{% if activity.lab.level %}**Level**: {{activity.lab.level}} \| {% endif %}{% if activity.lab.duration %}**Duration**: {{activity.lab.duration}}{% endif %}
+{% if activity.lab.level %}**Level**: {{activity.lab.level}} \| {% endif %}{% if activity.lab.duration %}**Duration**: {{activity.lab.duration}} minutes{% endif %}
 
 {% if activity.lab.description %}
 *{{activity.lab.description}}*
