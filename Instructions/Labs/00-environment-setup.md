@@ -23,7 +23,7 @@ Use a Windows 11 computer with the following software and access:
 | Python | Python 3.13, with `python` and its `pip` module available in PowerShell. |
 | Local files | Write access to your `Downloads` folder, ZIP extraction through File Explorer, and a text editor for the supplied code files. |
 | Package installation | Permission to install the event simulator's Python dependency in the interpreter used for the lab. |
-| Network access | Access to Microsoft sign-in, Fabric, Microsoft Foundry, Copilot Studio, the Azure portal, GitHub raw downloads, and the Python package index over HTTPS. Permit outbound AMQP over TLS on TCP port 5671 to the Fabric eventstream custom endpoint. |
+| Network access | Access to Microsoft sign-in, Fabric, Microsoft Foundry, Microsoft 365 Copilot, Copilot Studio (L300), the Azure portal, GitHub raw downloads, and the Python package index over HTTPS. Permit outbound AMQP over TLS on TCP port 5671 to the Fabric eventstream custom endpoint. |
 
 Install [PowerShell 7](https://learn.microsoft.com/powershell/scripting/install/installing-powershell-on-windows) and [Python 3.13](https://www.python.org/downloads/windows/) before you start. Include `pip` and add Python to `PATH` during Python installation.
 
@@ -51,7 +51,7 @@ The Fabric notebooks run in Fabric, not on your computer. You don't need a local
 
 ## Confirm licenses and permissions
 
-Use a work or school Microsoft Entra account for the lab services. Use the same account and tenant for Fabric and Copilot Studio.
+Use a work or school Microsoft Entra account for the lab services. Use the same account and tenant for Fabric and the Copilot experience used by your exercise: Copilot Studio for L300, or Microsoft 365 Copilot for L400.
 
 | Service | Required starting state |
 |---|---|
@@ -59,8 +59,8 @@ Use a work or school Microsoft Entra account for the lab services. Use the same 
 | Fabric workspace | Permission to create, edit, run, publish, and delete the lab's Lakehouse, notebooks, Eventhouse, KQL queries, Eventstream, SQL database, shortcuts, data agents, and ontology. Your account can read the underlying data and obtain the custom endpoint's connection details. |
 | Fabric tenant settings | An administrator has enabled Fabric item creation, data-agent and Copilot features, and the AI functions and ontology features used by the exercise for your account and capacity. Required regional processing and storage settings are approved and enabled before delivery. |
 | Microsoft Foundry and Azure | An active Azure subscription with permission to create and delete the lab resource group, Foundry resource and project, connections, and model deployment. The selected region supports the Fabric integration and `gpt-5-mini`, with available deployment quota. |
-| Microsoft Copilot Studio | A licensed authoring account, access to a prepared environment with agent usage capacity, and permission to create, edit, connect tools to, test, publish, and delete agents. Include the Microsoft 365 Copilot license required by the documented Fabric data-agent integration. |
-| Cross-service connections | Permission to create and use the Fabric connections in Foundry and Copilot Studio, with access to the Fabric data agent and its underlying sources. Organizational policies permit these connections and the associated data processing. |
+| Microsoft Copilot Studio (L300) | A licensed authoring account, access to a prepared environment with agent usage capacity, and permission to create, edit, connect tools to, test, publish, and delete agents. Include the Microsoft 365 Copilot license required by the documented Fabric data-agent integration. |
+| Cross-service connections | Permission to create and use the Fabric connection in Foundry and the Copilot integration used by your exercise, with access to the Fabric data agent and its underlying sources. Organizational policies permit these connections and the associated data processing. |
 
 The exercise creates the workspace, data, agents, and Foundry deployment. You don't need to create those items in advance.
 
@@ -87,7 +87,7 @@ Keep the following non-secret values available for the exercise. In your own env
 | Lab account | The work or school account and tenant used for the services. |
 | Fabric capacity | The paid capacity name and region to select when you create the workspace. |
 | Azure subscription | The subscription and supported region for the Foundry project and deployment. |
-| Copilot Studio environment | The environment in which you create the agent. |
+| Copilot Studio environment (L300) | The environment in which you create the L300 agent. |
 | Sentiment model (L300) | The prepared Azure OpenAI resource name and model deployment name for the L300 customer-feedback tasks. The L400 challenge creates its own Foundry sentiment deployment. |
 | Cleanup boundary | The resources you own and can delete, and any shared resources that must remain. |
 
@@ -104,13 +104,13 @@ Don't record passwords, access tokens, or connection strings in this table. You 
 
 ## Prepare for the L400 challenge
 
-Prepare the common computer, Fabric, Foundry, and Copilot Studio requirements above and the additions below. The L400 challenge doesn't use the L300 extension's prepared Azure OpenAI resource, SQL managed-identity credential, or sentiment stored procedure. It uses a Foundry model called by a supplied Python client.
+Prepare the common computer, Fabric, and Foundry requirements above and the Microsoft 365 Copilot requirements below. The Copilot Studio-specific requirements above apply to L300. L400 publishes Fabric data agents directly to Microsoft 365 Copilot. The L400 challenge doesn't use the L300 extension's prepared Azure OpenAI resource, SQL managed-identity credential, or sentiment stored procedure. It uses a Foundry model called by a supplied Python client.
 
 The solutions use distinct agents and source selections in one Fabric workspace. Planning tables are populated once and reused. Prepare access for all three solutions, but leave resource creation to the learner:
 
 | Solution | Starting capability to prepare | Resources the learner builds |
 |---|---|---|
-| Business answers in Teams | Fabric SQL and OneLake shortcut access; Copilot Studio and Teams publication. | Challenge workspace, notebook-populated Lakehouse, transactional SQL database, shortcut, direct data agent, and Copilot Studio agent. |
+| Business answers in Microsoft 365 Copilot | Fabric SQL and OneLake shortcut access; direct Fabric data-agent publication to Microsoft 365 Copilot. | Challenge workspace, notebook-populated Lakehouse, transactional SQL database, shortcut, and business data agent published to the Agent Store. |
 | Real-time operational answers in Foundry | Eventstream connectivity; Eventhouse access; Foundry agent permissions and quota for `gpt-5-mini` or an approved compatible model. | Eventhouse, Eventstream, operational data agent, and Foundry project and agent, reusing the existing Lakehouse planning tables. |
 | Governed Litware integration | Notebook AI functions; ontology access; local SQL client authentication; inference quota for `gpt-5-mini` or an approved compatible model. | Persisted sentiment, issue enrichment, Litware tables, ontology and data agent in the same workspace; a separate Foundry project and deployment for sentiment. |
 
@@ -119,17 +119,17 @@ The solutions use distinct agents and source selections in one Fabric workspace.
 | Local SQL client | Microsoft [ODBC Driver 18 for SQL Server](https://learn.microsoft.com/sql/connect/odbc/download-odbc-driver-for-sql-server) installed for the Python architecture. No local SQL Server installation is needed. |
 | Developer authentication | [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) installed. The assigned identity can use `az login` and obtain Microsoft Entra tokens for Fabric SQL and model inference. PowerShell configuration permits virtual-environment activation. |
 | SQL network and data access | Outbound TCP 1433 to the Fabric SQL database connection endpoint. The identity can create and populate its database, then read and update `dbo.customer_feedback` from Python through the writable SQL endpoint. |
-| Fabric settings and capacity | Paid F2 or higher capacity with required item, data-agent, ontology, and AI-function settings enabled. Each data agent and its underlying source items use capacities in the same supported region. |
+| Fabric settings and capacity | Paid F4 or higher capacity for this challenge, with required item, data-agent, ontology, and AI-function settings enabled. Each data agent and its underlying source items use capacities in the same supported region. Enable cross-geo processing and storage where required and approved. |
 | Notebook runtime | Fabric Runtime 1.3 or later with `synapse.ml.spark.aifunc` available, and approved AI-function usage and billing for issue enrichment. The enrichment notebook includes the documented Runtime 2.0 model settings. |
 | Foundry models and permissions | Supported region and quota for operational orchestration and sentiment inference deployments, using `gpt-5-mini` as the example or approved compatible replacements. The learner can create and delete two dedicated resource groups and projects, deploy models, and invoke the sentiment model through its resource OpenAI v1 endpoint. Prepare **Foundry User** for building and testing agents and **Foundry Project Manager** for creating the Fabric IQ connection. Include the runtime identity and any delegated user identities where required. Prepare model-inference access, such as **Cognitive Services OpenAI User**, including for resources the learner creates. |
 | Long-running Foundry calls | Approve a background-mode-capable model and quota, such as `gpt-5.4` or `gpt-5.5`, for use if the Fabric data-agent call exceeds the synchronous timeout. Supply the approved model or deployment name and permit deployment in the learner's operational project. This is a timeout recovery path, not another required solution. |
-| Cross-service identity | Same tenant across Fabric, Foundry, Copilot Studio, Teams, and Microsoft 365 Copilot. User-authenticated Fabric IQ calls have read access to the data agent and its underlying sources. Don't substitute a more privileged maker identity. |
-| Teams and Microsoft 365 | Required authoring, usage, and Microsoft 365 Copilot licenses; access to both Teams and Microsoft 365 Copilot; permission to add the **Teams and Microsoft Copilot** channel and install the agent personally. Confirm the Copilot Studio **Agent** option under **Optimize your business processes** and its **Fabric IQ Data MCP** tool are available. Required Power Platform app policies and organizational approvals are completed beforehand. |
+| Cross-service identity | Same tenant across Fabric, Foundry, and Microsoft 365 Copilot. Sign in to Fabric and Microsoft 365 Copilot with the same account. User-authenticated Fabric IQ calls have read access to the data agent and its underlying sources. Don't substitute a more privileged maker identity. |
+| Microsoft 365 Copilot | A supported Microsoft Copilot license or Office 365 commercial subscription and the user licenses required for each person using the data agent. Confirm [direct Fabric data-agent prerequisites](https://learn.microsoft.com/fabric/data-science/data-agent-microsoft-365-copilot), enable Copilot extensibility for the assigned account, and allow it to publish and use its Fabric data agents through the Agent Store. |
 | Resource ownership | The learner can create one dedicated Fabric workspace and remove it at the end. Shared capacities, environments, and connections are identified and protected. |
 
 Fabric SQL automatically mirrors supported tables into OneLake. Don't require Azure SQL Database or separate mirroring configuration. The business solution validates propagation of a source update through a shortcut; the ontology solution later adds sentiment in the same database.
 
-Before delivery, verify sign-in, simulator dependency installation, local SQL authentication, model invocation, notebook AI functions, and personal Teams installation with an equivalent identity. Use disposable provider resources for checks requiring a database or model; don't prebuild the learner's solution. Supply the assigned account, capacity, subscription, region, Copilot Studio environment, cleanup boundary, and support contact through the environment's resource information panel.
+Before delivery, verify sign-in, simulator dependency installation, local SQL authentication, model invocation, notebook AI functions, and direct Fabric data-agent publication and use in Microsoft 365 Copilot with an equivalent identity. Use disposable provider resources for checks requiring a database or model; don't prebuild the learner's solution. Supply the assigned account, capacity, subscription, region, cleanup boundary, and support contact through the environment's resource information panel.
 
 Release the source assets and L400 ZIP to the repository's `main` branch before delivery. The setup dependency command, learner download, and curation notebook all use `MicrosoftLearning/mslearn-unify-data/main`. Confirm that those URLs return the released files; local files alone don't make these download paths available.
 
@@ -138,3 +138,4 @@ Check the [model retirement schedule](https://learn.microsoft.com/azure/foundry/
 The 360-minute allocation is an author estimate, not a pilot-verified duration. Reuse infrastructure without merging the agents' source scopes: the operational agent uses planning and streaming evidence, while the business and ontology agents use their relevant transactional and curated data. The ontology solution extends the business solution and doesn't require streaming sources. Validate all required service paths, reset procedures, cleanup, and self-paced timing before release.
 
 Continue to either [Build an end-to-end Caldova data agent solution](./L300-unify-data.md) or [Solve Caldova launch-readiness challenges with grounded agents](./L400-unify-data-challenge.md). Download the corresponding learner package and create the lab resources as instructed there.
+

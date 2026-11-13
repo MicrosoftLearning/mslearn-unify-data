@@ -206,7 +206,6 @@ class ChallengeAssetTests(unittest.TestCase):
 
     def test_supported_delivery_configuration(self):
         lab = (ROOT.parents[1] / "Instructions" / "Labs" / "L400-unify-data-challenge.md").read_text(encoding="utf-8")
-        self.assertIn("**Optimize your business processes**", lab)
         self.assertIn("**Pass-through** authentication", lab)
         self.assertIn("**Maximum duration = 1 minute**", lab)
         self.assertIn("**Use mapping table?**", lab)
@@ -222,3 +221,4 @@ class ChallengeAssetTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
