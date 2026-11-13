@@ -12,4 +12,4 @@ plugins:
   - jekyll-mentions
   - jemoji
 markdown: GFM
-title: Lab Exercises
+title: Lab exercises
